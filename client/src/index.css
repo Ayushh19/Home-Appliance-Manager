@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+/* Design tokens — see docs/DESIGN.md (incl. "Implementation notes"). */
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-surface: #e8e8e8; /* Soft Grey — base surface */
+  --color-surface-raised: #efefef;
+  --color-field: #f4f4f5;
+  --color-ink: #2f3440; /* charcoal — primary text */
+  --color-muted: #5f6672; /* secondary text */
+  --color-line: #cfd0d6; /* borders */
+  --color-accent: #c8e0f4; /* Soft Blue */
+  --color-accent-hover: #b8cee0; /* Soft Blue, 8% darker */
+  --color-accent-strong: #5b8fc0; /* focus ring / links — visible on grey */
+  --color-blush: #f5e0e8; /* Soft Pink — secondary accent */
+  --color-danger: #b42318;
+
+  --radius-sm: 14px;
+  --radius-md: 28px;
+  --radius-lg: 42px;
+
+  --shadow-neu: -5px -5px 15px rgb(255 255 255 / 0.8), 5px 5px 15px rgb(163 168 184 / 0.5);
+  --shadow-neu-sm: -3px -3px 8px rgb(255 255 255 / 0.8), 3px 3px 8px rgb(163 168 184 / 0.45);
+  --shadow-neu-inset: inset 3px 3px 6px rgb(163 168 184 / 0.45), inset -3px -3px 6px rgb(255 255 255 / 0.8);
+  --shadow-card: 0 2px 12px rgb(0 0 0 / 0.06), -5px -5px 15px rgb(255 255 255 / 0.7), 5px 5px 15px rgb(163 168 184 / 0.35);
+
+  --animate-fade-up: fade-up 420ms ease-out both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-ink font-sans antialiased;
+    line-height: 1.6;
+  }
+  h1, h2, h3 {
+    @apply tracking-tight;
+    line-height: 1.2;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent-strong);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791132696431,
+      "tag": "0000_watery_serpent_society",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791133986630,
+      "tag": "0001_document_file_metadata",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791134346911,
+      "tag": "0002_schedule_delete_rules",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791135176923,
+      "tag": "0003_visit_withdrawn",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791136166269,
+      "tag": "0004_asset_name_other_status_log",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791186370396,
+      "tag": "0005_service_center_closed",
+      "breakpoints": true
+    }
+  ]
+}
