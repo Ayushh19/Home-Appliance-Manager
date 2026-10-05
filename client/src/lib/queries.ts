@@ -20,6 +20,7 @@ export const keys = {
   homeAssets: (id: string) => ['homes', id, 'assets'] as const,
   asset: (id: string) => ['assets', id] as const,
   reminders: ['reminders'] as const,
+  activeAssets: ['assets', 'active'] as const,
   dashboard: ['dashboard'] as const,
   serviceRequests: ['service-requests'] as const,
   serviceRequest: (id: string) => ['service-requests', id] as const,
@@ -40,7 +41,7 @@ export const useHome = (id: string) =>
   useQuery({ queryKey: keys.home(id), queryFn: () => api<{ id: string; name: string; address: string }>(`/homes/${id}`), enabled: Boolean(id) });
 
 export const useHomeAssets = (id: string) =>
-  useQuery({ queryKey: keys.homeAssets(id), queryFn: () => api<AssetSummary[]>(`/homes/${id}/assets`) });
+  useQuery({ queryKey: keys.homeAssets(id), queryFn: () => api<AssetSummary[]>(`/homes/${id}/assets`), enabled: Boolean(id) });
 
 export const useAsset = (id: string) =>
   useQuery({ queryKey: keys.asset(id), queryFn: () => api<AssetDetail>(`/assets/${id}`), enabled: Boolean(id) });
@@ -81,3 +82,7 @@ export const useTechnicians = () =>
 
 export const useCenterProfile = () =>
   useQuery({ queryKey: keys.centerProfile, queryFn: () => api<ServiceCenterProfile>('/center/profile') });
+
+/** The customer's assets in use, across all homes. */
+export const useActiveAssets = (enabled = true) =>
+  useQuery({ queryKey: keys.activeAssets, queryFn: () => api<AssetSummary[]>('/assets?status=active'), enabled });

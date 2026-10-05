@@ -2,7 +2,12 @@
 
 ## Creating a request (customer)
 
-1. The customer opens an asset and chooses **Request service**.
+1. The customer chooses **Request service** in one of three places:
+   - on an asset's page;
+   - on the **Overview**, in Active service requests: first picks one of that home's appliances in use;
+   - on the **Service requests** page: first picks an appliance in use from any home (grouped by home, searchable).
+
+   Started from the Overview or Service requests page, the form's Back and Cancel return there, and so does sending the request, with a "Service request sent" message (decision #38).
 2. They choose a **type**, either `maintenance` or `repair`, and describe the problem. For a maintenance request, they also select **which maintenance schedule** of the asset it is for (if the asset has any).
 3. They pick a **service center** from the registered, **open** centers that support this asset's **category and brand**. Closed centers aren't listed.
 4. The request is created with status **New** and sent to that center.

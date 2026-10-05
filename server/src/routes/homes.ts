@@ -1,9 +1,9 @@
-import { assetSchema, homeSchema, type AssetSummary, type HomeSummary } from '@ham/shared';
-import { and, asc, desc, eq, sql } from 'drizzle-orm';
+import { assetSchema, homeSchema, type HomeSummary } from '@ham/shared';
+import { asc, eq, sql } from 'drizzle-orm';
 import { Router } from 'express';
-import { brandName, categoryName } from '../lib/assetNames.js';
 import { db } from '../db/client.js';
-import { assetCategories, assets, brands, homes } from '../db/schema.js';
+import { assets, homes } from '../db/schema.js';
+import { listAssets } from '../lib/assetList.js';
 import { parseBody } from '../lib/http.js';
 import { ownedHome } from '../lib/ownership.js';
 import { requireRole } from '../lib/session.js';
@@ -56,22 +56,7 @@ homesRouter.patch('/:homeId', async (req, res) => {
 
 homesRouter.get('/:homeId/assets', async (req, res) => {
   await ownedHome(req.params.homeId, req.user!.id);
-  const rows: AssetSummary[] = await db
-    .select({
-      id: assets.id,
-      homeId: assets.homeId,
-      category: categoryName,
-      brand: brandName,
-      name: assets.name,
-      model: assets.model,
-      status: assets.status,
-      purchaseDate: assets.purchaseDate,
-    })
-    .from(assets)
-    .innerJoin(assetCategories, eq(assets.categoryId, assetCategories.id))
-    .innerJoin(brands, eq(assets.brandId, brands.id))
-    .where(and(eq(assets.homeId, req.params.homeId)))
-    .orderBy(asc(categoryName), desc(assets.createdAt));
+  const rows = await listAssets(eq(assets.homeId, req.params.homeId));
   res.json(rows);
 });
 

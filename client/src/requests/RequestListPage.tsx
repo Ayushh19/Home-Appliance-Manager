@@ -25,6 +25,8 @@ export function RequestListPage({
   perspective,
   linkTo,
   emptyAction,
+  actions,
+  notice,
 }: {
   title: string;
   subtitle: string;
@@ -32,6 +34,9 @@ export function RequestListPage({
   perspective: ListPerspective;
   linkTo: (id: string) => string;
   emptyAction?: ReactNode;
+  actions?: ReactNode;
+  /** Shown between the header and the tabs, e.g. a confirmation. */
+  notice?: ReactNode;
 }) {
   const requests = useServiceRequests();
   const [tab, setTab] = useState(tabs[0]!.value);
@@ -41,7 +46,8 @@ export function RequestListPage({
 
   return (
     <>
-      <PageHeader title={title} subtitle={subtitle} />
+      <PageHeader title={title} subtitle={subtitle} actions={actions} />
+      {notice}
       <Tabs
         tabs={tabs.map((t) => ({ value: t.value, label: t.label, count: requests.data ? filter(t).length : undefined }))}
         value={tab}

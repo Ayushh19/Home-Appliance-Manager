@@ -16,7 +16,7 @@ The customer's landing page (`/app`) is an overview of **one home** (docs/DECISI
 | Section | What it shows |
 |---|---|
 | Attention banner | Overdue maintenance, and requests waiting on the customer (rejected and needing a new center, or a visit time to confirm) |
-| Active service requests | New, accepted, assigned and in-progress requests, plus rejected ones waiting for the customer to choose another center |
+| Active service requests | New, accepted, assigned and in-progress requests, plus rejected ones waiting for the customer to choose another center. Has a **Request service** button (pick one of this home's appliances, then the usual form) |
 | Recently serviced | Services on assets in use from the last **90 days**, newest first, with cost |
 | Most serviced | Top 3 assets by number of services (then by amount spent), with total spent on each. See the toggle below |
 | Maintenance coming up | Schedules on assets in use that are **overdue** or due in the next **30 days** |

@@ -34,6 +34,7 @@ import { HttpError, parseBody } from '../lib/http.js';
 import { ownedAsset, ownedDocument, ownedSchedule, ownedWarranty } from '../lib/ownership.js';
 import { requireRole } from '../lib/session.js';
 import { refreshReminders } from '../jobs/reminders.js';
+import { listAssets } from '../lib/assetList.js';
 import { listServiceRequests, serviceRecordsFor } from '../lib/serviceRequests.js';
 import { assertCatalogIds } from './catalog.js';
 import { createServiceRequest, moveScheduleForward } from './serviceRequests.js';
@@ -117,10 +118,10 @@ assetsRouter.get('/:assetId', async (req, res) => {
       .orderBy(asc(assetStatusChanges.createdAt)),
   ]);
 
-  const { homeName, statusChangedAt, ...asset } = row!;
+  const { statusChangedAt, ...asset } = row!;
   const detail: AssetDetail = {
     ...asset,
-    home: { id: asset.homeId, name: homeName },
+    home: { id: asset.homeId, name: asset.homeName },
     statusChangedAt: statusChangedAt?.toISOString() ?? null,
     warranties: warrantyRows,
     documents: documentRows.map((d) => ({ ...d, uploadedAt: d.uploadedAt.toISOString() })),
@@ -201,6 +202,12 @@ warrantiesRouter.delete('/:warrantyId', async (req, res) => {
   await ownedWarranty(req.params.warrantyId, req.user!.id);
   await db.delete(warranties).where(eq(warranties.id, req.params.warrantyId));
   res.status(204).end();
+});
+
+// The customer's assets across all homes; ?status=active for those in use.
+assetsRouter.get('/', async (req, res) => {
+  const status = req.query.status === 'active' ? eq(assets.status, 'active') : undefined;
+  res.json(await listAssets(and(eq(homes.ownerId, req.user!.id), status)));
 });
 
 // ---------- Maintenance schedules ----------

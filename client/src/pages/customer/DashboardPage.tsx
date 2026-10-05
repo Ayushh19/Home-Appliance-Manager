@@ -9,17 +9,19 @@ import {
   type DashboardAsset,
 } from '@ham/shared';
 import { useQuery } from '@tanstack/react-query';
-import { CalendarClock, ChevronRight, ClipboardList, History, House, ShieldAlert, Wrench } from 'lucide-react';
+import { CalendarClock, ChevronRight, ClipboardList, History, House, Plus, ShieldAlert, Wrench } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useMe } from '../../auth/useAuth';
 import { api } from '../../lib/api';
 import { formatDate, formatMoney } from '../../lib/format';
 import { keys, useHomes } from '../../lib/queries';
+import { AssetPickerModal } from '../../requests/AssetPickerModal';
 import { RequestList } from '../../requests/RequestList';
+import { RequestSentNotice } from '../../requests/RequestSentNotice';
 import { FormError } from '../../ui/Alert';
 import { Badge } from '../../ui/Badge';
-import { buttonClass } from '../../ui/Button';
+import { Button, buttonClass } from '../../ui/Button';
 import { Card } from '../../ui/Card';
 import { categoryIcon } from '../../ui/categoryIcon';
 import { EmptyState } from '../../ui/EmptyState';
@@ -94,6 +96,7 @@ function Section({
   title,
   icon: Icon,
   count,
+  action,
   children,
   delay = 0,
 }: {
@@ -101,16 +104,20 @@ function Section({
   title: string;
   icon: typeof House;
   count: number;
+  action?: ReactNode;
   children: ReactNode;
   delay?: number;
 }) {
   return (
     <Card id={id} padded={false} className="animate-fade-up scroll-mt-24 overflow-hidden" style={{ animationDelay: `${delay}ms` }}>
-      <h2 className="flex items-center gap-2 px-6 pt-6 pb-3 text-lg font-bold">
-        <Icon className="size-5" aria-hidden />
-        {title}
-        <span className="font-mono text-sm font-normal text-muted">{count}</span>
-      </h2>
+      <div className="flex flex-wrap items-center justify-between gap-3 px-6 pt-6 pb-3">
+        <h2 className="flex items-center gap-2 text-lg font-bold">
+          <Icon className="size-5" aria-hidden />
+          {title}
+          <span className="font-mono text-sm font-normal text-muted">{count}</span>
+        </h2>
+        {action}
+      </div>
       {children}
     </Card>
   );
@@ -161,6 +168,7 @@ export function DashboardPage() {
     remember(LAST_HOME_KEY, id);
     setParams({ home: id }, { replace: true });
   };
+  const [picking, setPicking] = useState(false);
   const toggleRetired = (on: boolean) => {
     remember(INCLUDE_RETIRED_KEY, on ? '1' : '0');
     setIncludeRetired(on);
@@ -223,6 +231,7 @@ export function DashboardPage() {
         }
       />
 
+      <RequestSentNotice />
       <div className="mb-3 flex animate-fade-up justify-end">
         <Toggle label="Include retired and replaced items in costs" checked={includeRetired} onChange={toggleRetired} />
       </div>
@@ -256,13 +265,24 @@ export function DashboardPage() {
 
       <div className="grid items-start gap-6 md:grid-cols-[7fr_5fr]">
         <div className="space-y-6">
-          <Section id="requests" title="Active service requests" icon={ClipboardList} count={d.activeRequests.length}>
+          <Section
+            id="requests"
+            title="Active service requests"
+            icon={ClipboardList}
+            count={d.activeRequests.length}
+            action={
+              <Button variant="ghost" className="px-3 py-2" onClick={() => setPicking(true)}>
+                <Plus className="size-4" aria-hidden />
+                Request service
+              </Button>
+            }
+          >
             {d.activeRequests.length ? (
               <div className="border-t border-line/70">
                 <RequestList requests={d.activeRequests} perspective="customer" linkTo={(id) => `/app/requests/${id}`} />
               </div>
             ) : (
-              <Empty>No open service requests. To request service, open an asset and choose Request service.</Empty>
+              <Empty>No open service requests.</Empty>
             )}
           </Section>
 
@@ -348,6 +368,12 @@ export function DashboardPage() {
           </Section>
         </div>
       </div>
+      <AssetPickerModal
+        open={picking}
+        onClose={() => setPicking(false)}
+        homeId={d.home.id}
+        from={{ to: `/app?home=${d.home.id}`, label: 'Overview' }}
+      />
     </>
   );
 }

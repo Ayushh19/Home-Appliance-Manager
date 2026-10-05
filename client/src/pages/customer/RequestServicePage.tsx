@@ -7,6 +7,7 @@ import { api, fieldErrorsOf } from '../../lib/api';
 import { validate } from '../../lib/form';
 import { keys, useAsset, useServiceCenters } from '../../lib/queries';
 import { CenterPicker } from '../../requests/CenterPicker';
+import { useRequestOrigin, type RequestSent } from '../../requests/requestOrigin';
 import { FormError } from '../../ui/Alert';
 import { Button, buttonClass } from '../../ui/Button';
 import { Card } from '../../ui/Card';
@@ -21,6 +22,8 @@ export function RequestServicePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const asset = useAsset(assetId);
+  const from = useRequestOrigin();
+  const backTo = from?.to ?? `/app/assets/${assetId}`;
   const centers = useServiceCenters(assetId);
 
   const [form, setForm] = useState<{ type: ServiceType | ''; maintenanceScheduleId: string; description: string; serviceCenterId: string }>({
@@ -37,7 +40,10 @@ export function RequestServicePage() {
     onSuccess: ({ id }) => {
       queryClient.invalidateQueries({ queryKey: keys.serviceRequests });
       queryClient.invalidateQueries({ queryKey: keys.asset(assetId) });
-      navigate(`/app/requests/${id}`);
+      queryClient.invalidateQueries({ queryKey: keys.dashboard });
+      // Started from the overview or Service requests page: go back there with a confirmation.
+      if (from) navigate(from.to, { state: { requestSent: { requestId: id, assetLabel: assetLabel(asset.data!) } satisfies RequestSent } });
+      else navigate(`/app/requests/${id}`);
     },
     onError: (err) => setErrors(fieldErrorsOf(err)),
   });
@@ -57,7 +63,7 @@ export function RequestServicePage() {
   return (
     <div className="mx-auto max-w-3xl">
       <PageHeader
-        back={{ to: `/app/assets/${assetId}`, label: a ? assetLabel(a) : 'Back' }}
+        back={from ?? { to: `/app/assets/${assetId}`, label: a ? assetLabel(a) : 'Back' }}
         title="Request service"
         subtitle="Describe the problem and choose a service center. You can follow the request's progress here."
       />
@@ -75,7 +81,7 @@ export function RequestServicePage() {
             title="No service centers yet"
             description={`No registered service center supports ${a!.brand} ${a!.category.toLowerCase()} yet.`}
             action={
-              <Link to={`/app/assets/${assetId}`} className={buttonClass('ghost')}>
+              <Link to={backTo} className={buttonClass('ghost')}>
                 Back to asset
               </Link>
             }
@@ -141,7 +147,7 @@ export function RequestServicePage() {
             />
 
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-              <Link to={`/app/assets/${assetId}`} className={buttonClass('ghost')}>
+              <Link to={backTo} className={buttonClass('ghost')}>
                 Cancel
               </Link>
               <Button type="submit" loading={create.isPending}>

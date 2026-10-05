@@ -43,6 +43,7 @@ Every product and technical decision made so far. Add new decisions here as they
 | 35 | Closing a center | Closing **deactivates** the center: it's hidden from customers choosing a center, and all its requests and history stay. Staff can **reopen** it. |
 | 36 | Open requests when closing | A center **can't be closed while it has open requests** (new, accepted, assigned or in progress). Staff finish or reject them first. |
 | 37 | Accounts of a closed center | **Staff** can still sign in (to see past requests and reopen). **Technicians** can't sign in until the center reopens. |
+| 38 | Request service from the overview and Service requests page | A **Request service** button on the Overview (Active service requests) and the Service requests page opens a picker of appliances in use (this home's on the Overview, all homes on the Service requests page), then the usual request form. Back, Cancel and sending the request return to the page the customer started from. |
 
 ## Technical decisions — 2026-10-04
 

@@ -71,6 +71,7 @@ export const assetStatusSchema = z.object({ status: z.enum(ASSET_STATUSES) });
 export interface AssetSummary {
   id: string;
   homeId: string;
+  homeName: string;
   name: string | null;
   /** Display names: the customer's text for "Other", else the built-in name. */
   category: string;
